@@ -1,0 +1,175 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "patients",
+    "description": "De-identified clinical trial participants. Each patient is registered at one site and may be enrolled in 1-3 trials. References trials via enrolled_trials array (many-to-many relationship).",
+    "required": [
+      "patient_id",
+      "name",
+      "date_of_birth",
+      "gender",
+      "ethnicity",
+      "blood_type",
+      "bmi",
+      "smoking_status",
+      "diagnosis",
+      "site_id",
+      "enrolled_trials",
+      "enrolment_date",
+      "contact_info",
+      "created_at"
+    ],
+    "properties": {
+      "patient_id": {
+        "bsonType": "string",
+        "description": "Unique patient identifier. Format: PT-XXXXXX.",
+        "pattern": "^PT-\\d{6}$"
+      },
+      "name": {
+        "bsonType": "string",
+        "description": "Synthetic full name (Firstname Lastname) for internal use."
+      },
+      "date_of_birth": {
+        "bsonType": "date",
+        "description": "ISO 8601 date of birth. Range: 1940-01-01 to 2005-12-31."
+      },
+      "gender": {
+        "bsonType": "string",
+        "enum": [
+          "Male",
+          "Female",
+          "Non-binary",
+          "Prefer not to say"
+        ],
+        "description": "Patient gender."
+      },
+      "ethnicity": {
+        "bsonType": "string",
+        "enum": [
+          "Malay",
+          "Chinese",
+          "Indian",
+          "Caucasian",
+          "African",
+          "Hispanic",
+          "Other"
+        ],
+        "description": "Patient ethnicity."
+      },
+      "blood_type": {
+        "bsonType": "string",
+        "enum": [
+          "A+",
+          "A-",
+          "B+",
+          "B-",
+          "AB+",
+          "AB-",
+          "O+",
+          "O-"
+        ],
+        "description": "Blood type recorded at enrolment."
+      },
+      "bmi": {
+        "bsonType": "double",
+        "description": "Body Mass Index at enrolment. Range: 15.0-45.0.",
+        "minimum": 15.0,
+        "maximum": 45.0
+      },
+      "smoking_status": {
+        "bsonType": "string",
+        "enum": [
+          "Never",
+          "Former",
+          "Current"
+        ],
+        "description": "Smoking status at enrolment."
+      },
+      "diagnosis": {
+        "bsonType": "object",
+        "description": "Primary diagnosis for which the patient is enrolled. Embedded because it is a 1:1 attribute always accessed with the patient.",
+        "required": [
+          "icd10_code",
+          "description",
+          "diagnosed_on"
+        ],
+        "properties": {
+          "icd10_code": {
+            "bsonType": "string",
+            "description": "ICD-10 code for primary diagnosis. E.g. C34.1, C50.9."
+          },
+          "description": {
+            "bsonType": "string",
+            "description": "Human-readable diagnosis description."
+          },
+          "diagnosed_on": {
+            "bsonType": "date",
+            "description": "Date the diagnosis was made."
+          }
+        }
+      },
+      "comorbidities": {
+        "bsonType": "array",
+        "description": "Pre-existing conditions. 0-5 entries. Empty array if none. Each entry is an ICD-10 code + label string.",
+        "minItems": 0,
+        "maxItems": 5,
+        "items": {
+          "bsonType": "string",
+          "description": "Comorbidity in format 'ICD10_CODE - Label'. E.g. 'E11.9 - Type 2 diabetes mellitus'."
+        }
+      },
+      "site_id": {
+        "bsonType": "string",
+        "description": "Research site where the patient is registered. Permanent assignment, does not change.",
+        "enum": [
+          "SITE-01",
+          "SITE-02",
+          "SITE-03",
+          "SITE-04",
+          "SITE-05"
+        ]
+      },
+      "enrolled_trials": {
+        "bsonType": "array",
+        "description": "Array of trial_id strings the patient is enrolled in. 1-3 entries. References the trials collection. Stores the patient side of the many-to-many patient-trial relationship.",
+        "minItems": 1,
+        "maxItems": 3,
+        "items": {
+          "bsonType": "string",
+          "description": "References trial_id in the trials collection."
+        }
+      },
+      "enrolment_date": {
+        "bsonType": "date",
+        "description": "Date when the patient was first enrolled."
+      },
+      "contact_info": {
+        "bsonType": "object",
+        "description": "Contact details. Embedded because it is a 1:1 attribute and only accessed alongside the patient document.",
+        "required": [
+          "email",
+          "phone",
+          "emergency_contact"
+        ],
+        "properties": {
+          "email": {
+            "bsonType": "string",
+            "description": "Synthetic email address."
+          },
+          "phone": {
+            "bsonType": "string",
+            "description": "Synthetic phone number."
+          },
+          "emergency_contact": {
+            "bsonType": "string",
+            "description": "Emergency contact person name."
+          }
+        }
+      },
+      "created_at": {
+        "bsonType": "date",
+        "description": "Record creation timestamp."
+      }
+    }
+  }
+}

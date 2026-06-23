@@ -1,0 +1,150 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "adverse_events",
+    "description": "Adverse event records reported during clinical trials. The most relationship-dense entity: every AE must reference a patient, a trial, and a specific intervention (all three mandatory). The AE does NOT store arm_label directly \u2014 to determine which arm an AE belongs to, look up the referenced intervention's arm_label. This indirect path (AE -> intervention -> arm_label) is essential for arm-level safety comparisons (AR-07).",
+    "required": [
+      "ae_id",
+      "patient_id",
+      "trial_id",
+      "intervention_id",
+      "event_name",
+      "system_organ_class",
+      "ctcae_grade",
+      "onset_date",
+      "outcome",
+      "serious",
+      "action_taken",
+      "causality",
+      "reported_by",
+      "created_at"
+    ],
+    "properties": {
+      "ae_id": {
+        "bsonType": "string",
+        "description": "Unique adverse event identifier. Format: AE-XXXXXXXX.",
+        "pattern": "^AE-\\d{8}$"
+      },
+      "patient_id": {
+        "bsonType": "string",
+        "description": "Reference to the patient who experienced this event. Mandatory \u2014 an AE without a patient is meaningless."
+      },
+      "trial_id": {
+        "bsonType": "string",
+        "description": "Reference to the trial under which this event was reported. Mandatory."
+      },
+      "intervention_id": {
+        "bsonType": "string",
+        "description": "Reference to the specific intervention being administered when the event occurred. Mandatory. Also serves as the indirect link to arm_label."
+      },
+      "event_name": {
+        "bsonType": "string",
+        "description": "MedDRA-style preferred term. E.g. Neutropenia, Nausea, Elevated ALT."
+      },
+      "system_organ_class": {
+        "bsonType": "string",
+        "description": "MedDRA System Organ Class category. E.g. Blood and lymphatic system disorders."
+      },
+      "ctcae_grade": {
+        "bsonType": "int",
+        "description": "CTCAE v5.0 severity grade. 1=Mild, 2=Moderate, 3=Severe, 4=Life-threatening, 5=Fatal.",
+        "minimum": 1,
+        "maximum": 5
+      },
+      "onset_date": {
+        "bsonType": "date",
+        "description": "Date the adverse event first occurred. Must be after patient enrolment."
+      },
+      "resolution_date": {
+        "bsonType": [
+          "date",
+          "null"
+        ],
+        "description": "Date the adverse event resolved. Null if the event is ongoing or was fatal."
+      },
+      "outcome": {
+        "bsonType": "string",
+        "enum": [
+          "Resolved",
+          "Resolving",
+          "Not resolved",
+          "Fatal",
+          "Unknown"
+        ],
+        "description": "Current outcome status of the adverse event."
+      },
+      "serious": {
+        "bsonType": "bool",
+        "description": "True if CTCAE grade >= 3 or the event required hospitalisation."
+      },
+      "action_taken": {
+        "bsonType": "string",
+        "enum": [
+          "None",
+          "Dose reduced",
+          "Dose interrupted",
+          "Drug withdrawn",
+          "Supportive care",
+          "Other"
+        ],
+        "description": "Clinical action taken in response to the event."
+      },
+      "causality": {
+        "bsonType": "string",
+        "enum": [
+          "Unrelated",
+          "Unlikely",
+          "Possible",
+          "Probable",
+          "Definite"
+        ],
+        "description": "Investigator's assessment of whether the intervention caused the event."
+      },
+      "lab_values": {
+        "bsonType": [
+          "object",
+          "null"
+        ],
+        "description": "Laboratory data associated with the AE. Only present for lab-based events (e.g. low platelet count, elevated liver enzymes). Null for non-lab events like skin rash. Embedded because lab values are a 1:1 attribute tied to the specific AE occurrence.",
+        "required": [
+          "test_name",
+          "value",
+          "unit",
+          "reference_range"
+        ],
+        "properties": {
+          "test_name": {
+            "bsonType": "string",
+            "description": "Name of the lab test. E.g. ANC, ALT, Platelet count."
+          },
+          "value": {
+            "bsonType": "double",
+            "description": "Measured lab value at time of event."
+          },
+          "unit": {
+            "bsonType": "string",
+            "description": "Unit of measurement. E.g. x10^9/L, U/L."
+          },
+          "reference_range": {
+            "bsonType": "string",
+            "description": "Normal reference range. E.g. 1.8-7.0 x10^9/L."
+          }
+        }
+      },
+      "reported_by": {
+        "bsonType": "string",
+        "enum": [
+          "Investigator",
+          "Patient",
+          "Nurse",
+          "Sponsor"
+        ],
+        "description": "Who reported the adverse event."
+      },
+      "created_at": {
+        "bsonType": "date",
+        "description": "Record creation timestamp."
+      }
+    }
+  }
+}

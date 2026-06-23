@@ -1,0 +1,193 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "trials",
+    "description": "Clinical trial protocols. Central entity in the system. Each trial defines 1-4 arms and is linked to interventions (via interventions array) and patients (via enrolled_trials in patients collection). Arms are embedded as they are bounded, small, and always accessed with the trial.",
+    "required": [
+      "trial_id",
+      "title",
+      "short_title",
+      "phase",
+      "status",
+      "sponsor",
+      "conditions",
+      "interventions",
+      "start_date",
+      "estimated_end_date",
+      "enrolment_target",
+      "enrolled_count",
+      "arms",
+      "primary_endpoint",
+      "secondary_endpoints",
+      "sites",
+      "ethical_approval",
+      "created_at"
+    ],
+    "properties": {
+      "trial_id": {
+        "bsonType": "string",
+        "description": "Unique trial identifier. Format: NCT-XXXXXXXX.",
+        "pattern": "^NCT-\\d{8}$"
+      },
+      "title": {
+        "bsonType": "string",
+        "description": "Full scientific trial title."
+      },
+      "short_title": {
+        "bsonType": "string",
+        "description": "Abbreviated title for dashboards and reports. Max 80 characters."
+      },
+      "phase": {
+        "bsonType": "string",
+        "enum": [
+          "Phase I",
+          "Phase II",
+          "Phase III",
+          "Phase IV",
+          "Not Applicable"
+        ],
+        "description": "Trial phase classification."
+      },
+      "status": {
+        "bsonType": "string",
+        "enum": [
+          "Recruiting",
+          "Active (not recruiting)",
+          "Completed",
+          "Terminated",
+          "Suspended",
+          "Withdrawn"
+        ],
+        "description": "Current trial status."
+      },
+      "sponsor": {
+        "bsonType": "string",
+        "description": "Organisation funding or leading the trial."
+      },
+      "conditions": {
+        "bsonType": "array",
+        "description": "Medical conditions studied in this trial. 1-4 entries.",
+        "minItems": 1,
+        "maxItems": 4,
+        "items": {
+          "bsonType": "string"
+        }
+      },
+      "interventions": {
+        "bsonType": "array",
+        "description": "Array of intervention_id strings belonging to this trial. References the interventions collection. Populated during ingestion by collecting all interventions with matching trial_id.",
+        "items": {
+          "bsonType": "string",
+          "description": "References intervention_id in the interventions collection."
+        }
+      },
+      "start_date": {
+        "bsonType": "date",
+        "description": "Trial start date. Range: 2018-01-01 to 2024-12-01."
+      },
+      "estimated_end_date": {
+        "bsonType": "date",
+        "description": "Estimated trial end date. Range: 2020-01-01 to 2027-12-31."
+      },
+      "enrolment_target": {
+        "bsonType": "int",
+        "description": "Target number of patients. Range: 30-2000.",
+        "minimum": 30,
+        "maximum": 2000
+      },
+      "enrolled_count": {
+        "bsonType": "int",
+        "description": "Actual number of patients enrolled. Range: 0 to enrolment_target.",
+        "minimum": 0
+      },
+      "arms": {
+        "bsonType": "array",
+        "description": "Treatment groups within the trial. 1-4 arms. Embedded because arms are bounded (max 4), small, and always accessed together with the trial.",
+        "minItems": 1,
+        "maxItems": 4,
+        "items": {
+          "bsonType": "object",
+          "required": [
+            "arm_label",
+            "arm_type"
+          ],
+          "properties": {
+            "arm_label": {
+              "bsonType": "string",
+              "description": "Arm identifier. E.g. Arm A, Arm B."
+            },
+            "arm_type": {
+              "bsonType": "string",
+              "enum": [
+                "Experimental",
+                "Active Comparator",
+                "Placebo Comparator",
+                "No Intervention"
+              ],
+              "description": "Classification of the arm."
+            },
+            "description": {
+              "bsonType": "string",
+              "description": "Brief description of the arm's treatment strategy."
+            }
+          }
+        }
+      },
+      "primary_endpoint": {
+        "bsonType": "string",
+        "description": "Primary outcome measure. E.g. Overall survival at 12 months."
+      },
+      "secondary_endpoints": {
+        "bsonType": "array",
+        "description": "Secondary outcome measures. 1-5 entries.",
+        "minItems": 1,
+        "maxItems": 5,
+        "items": {
+          "bsonType": "string"
+        }
+      },
+      "sites": {
+        "bsonType": "array",
+        "description": "Research sites involved in this trial. Each entry is a site_id string.",
+        "minItems": 1,
+        "items": {
+          "bsonType": "string",
+          "enum": [
+            "SITE-01",
+            "SITE-02",
+            "SITE-03",
+            "SITE-04",
+            "SITE-05"
+          ]
+        }
+      },
+      "ethical_approval": {
+        "bsonType": "object",
+        "description": "Ethics committee approval details. Embedded because it is a 1:1 attribute that never changes independently of the trial.",
+        "required": [
+          "approval_id",
+          "committee",
+          "approved_on"
+        ],
+        "properties": {
+          "approval_id": {
+            "bsonType": "string",
+            "description": "Ethics approval reference number."
+          },
+          "committee": {
+            "bsonType": "string",
+            "description": "Name of the ethics committee."
+          },
+          "approved_on": {
+            "bsonType": "date",
+            "description": "Date of ethics approval."
+          }
+        }
+      },
+      "created_at": {
+        "bsonType": "date",
+        "description": "Record creation timestamp."
+      }
+    }
+  }
+}

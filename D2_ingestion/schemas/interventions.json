@@ -1,0 +1,139 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "interventions",
+    "description": "Therapeutic interventions administered within a trial arm. Each intervention belongs to exactly one trial and one arm \u2014 it has no clinical meaning without that context. Stored as a separate collection (not embedded in trials) because interventions are independently queried by AR-05, AR-09, and AR-10, and adverse events reference them directly.",
+    "required": [
+      "intervention_id",
+      "trial_id",
+      "arm_label",
+      "name",
+      "type",
+      "mechanism",
+      "dosage",
+      "duration_weeks",
+      "regulatory_status",
+      "created_at"
+    ],
+    "properties": {
+      "intervention_id": {
+        "bsonType": "string",
+        "description": "Unique intervention identifier. Format: INT-XXXXXX.",
+        "pattern": "^INT-\\d{6}$"
+      },
+      "trial_id": {
+        "bsonType": "string",
+        "description": "Reference to the trial this intervention belongs to. Every intervention must be scoped to exactly one trial."
+      },
+      "arm_label": {
+        "bsonType": "string",
+        "description": "The arm within the trial that this intervention is assigned to. Must match an arm_label in the parent trial's arms array. Critical for the indirect AE-to-arm lookup path."
+      },
+      "name": {
+        "bsonType": "string",
+        "description": "Generic or brand name. E.g. Pembrolizumab, Placebo saline."
+      },
+      "type": {
+        "bsonType": "string",
+        "enum": [
+          "Drug",
+          "Biologic",
+          "Device",
+          "Procedure",
+          "Dietary Supplement",
+          "Placebo",
+          "Other"
+        ],
+        "description": "Category of intervention."
+      },
+      "mechanism": {
+        "bsonType": "string",
+        "description": "Short description of how the intervention works. E.g. PD-1 checkpoint inhibitor."
+      },
+      "dosage": {
+        "bsonType": "object",
+        "description": "Dosage details. Embedded because dosage is a 1:1 attribute inseparable from the intervention.",
+        "required": [
+          "amount",
+          "unit",
+          "frequency",
+          "route"
+        ],
+        "properties": {
+          "amount": {
+            "bsonType": [
+              "double",
+              "null"
+            ],
+            "description": "Numeric dosage amount. Null if not applicable (e.g. cell therapies)."
+          },
+          "unit": {
+            "bsonType": "string",
+            "enum": [
+              "mg",
+              "mg/kg",
+              "IU",
+              "mL"
+            ],
+            "description": "Dosage unit."
+          },
+          "frequency": {
+            "bsonType": "string",
+            "enum": [
+              "Once daily",
+              "Twice daily",
+              "Weekly",
+              "Biweekly",
+              "Monthly"
+            ],
+            "description": "How often the intervention is administered."
+          },
+          "route": {
+            "bsonType": "string",
+            "enum": [
+              "Oral",
+              "Intravenous",
+              "Subcutaneous",
+              "Intramuscular",
+              "Topical"
+            ],
+            "description": "Administration route."
+          }
+        }
+      },
+      "duration_weeks": {
+        "bsonType": "int",
+        "description": "Treatment duration in weeks. Range: 1-104.",
+        "minimum": 1,
+        "maximum": 104
+      },
+      "target_gene": {
+        "bsonType": [
+          "string",
+          "null"
+        ],
+        "description": "HGNC gene symbol targeted by this intervention. E.g. EGFR, BRCA1, TP53. Null if not applicable (e.g. placebos)."
+      },
+      "target_protein": {
+        "bsonType": [
+          "string",
+          "null"
+        ],
+        "description": "UniProt-style protein name targeted. E.g. Programmed cell death protein 1 (PD-1). Null if not applicable."
+      },
+      "regulatory_status": {
+        "bsonType": "string",
+        "enum": [
+          "Approved",
+          "Investigational",
+          "Compassionate Use"
+        ],
+        "description": "Current regulatory classification of the intervention."
+      },
+      "created_at": {
+        "bsonType": "date",
+        "description": "Record creation timestamp."
+      }
+    }
+  }
+}
