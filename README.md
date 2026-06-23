@@ -1,11 +1,8 @@
 # CTMS Mini Project — Clinical Trial Management System
-
+Link Report: https://docs.google.com/document/d/1Z93blX8aOnhSanckcCPvTEB2SCLXN6jTjQi2HSv_OOc/edit?usp=sharing
 SECB3213 Mini Project | Use Case 1: Clinical Trial Management System (CTMS)
 
 ## Prerequisites
-
-- **MongoDB** (v6+) running on `localhost:27017`
-- **Python 3.10+**
 - Install dependencies:
 
 ```bash
