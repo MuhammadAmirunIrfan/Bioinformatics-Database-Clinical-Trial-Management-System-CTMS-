@@ -3,13 +3,16 @@ import json
 import os
 import sys
 from datetime import datetime
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from pymongo.errors import CollectionInvalid
 
-#  Configuration 
+#  Configuration
 
-MONGO_URI = "mongodb+srv://muhammadamirunirfan_db_user:5XVqN7CNFlW457h2@cluster0.nkmouka.mongodb.net/?appName=Cluster0"
-DB_NAME = "ctms_db"
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"))
+
+MONGO_URI = os.environ["MONGO_URI"]
+DB_NAME = os.environ.get("DB_NAME", "ctms_db")
 
 # Paths — adjust if your folder structure differs
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

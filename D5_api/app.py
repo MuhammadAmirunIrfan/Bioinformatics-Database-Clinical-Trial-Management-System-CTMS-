@@ -16,11 +16,15 @@ Usage:
     Then open http://localhost:8000/docs for Swagger UI
 """
 
+import math
+import os
 from fastapi import FastAPI, Query, HTTPException, Path
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 from pymongo import MongoClient
 from typing import Optional
-import math
+
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"))
 
 # App Setup 
 
@@ -39,8 +43,8 @@ app.add_middleware(
 )
 
 # MongoDB connection
-client = MongoClient("mongodb+srv://muhammadamirunirfan_db_user:5XVqN7CNFlW457h2@cluster0.nkmouka.mongodb.net/?appName=Cluster0")
-db = client["ctms_db"]
+client = MongoClient(os.environ["MONGO_URI"])
+db = client[os.environ.get("DB_NAME", "ctms_db")]
 
 
 #  Helper 

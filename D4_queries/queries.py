@@ -1,9 +1,13 @@
+import os
 from pymongo import MongoClient
 from pprint import pprint
 from datetime import datetime
+from dotenv import load_dotenv
 
-client = MongoClient("cd")
-db = client["ctms_db"]
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env"))
+
+client = MongoClient(os.environ["MONGO_URI"])
+db = client[os.environ.get("DB_NAME", "ctms_db")]
 
 
 def print_header(ar_num, title, description):
